@@ -1,0 +1,12 @@
+name: Final_APP
+title: Final_APP
+username:
+account: yyypresentation
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2239190
+bundleId: 3102624
+url: https://yyypresentation.shinyapps.io/Final_APP/
+when: 1588618165.46435
+asMultiple: FALSE
+asStatic: FALSE
