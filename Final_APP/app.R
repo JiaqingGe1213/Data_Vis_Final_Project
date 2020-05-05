@@ -673,10 +673,10 @@ server <- function(input, output, session) {
                         choices = "All", selected = "All")
     }
     
-    if (input$level_select=="Country") {
+    if (input$level_select=="By country") {
       updatePickerInput(session = session, inputId = "country_select", 
-                        choices = c(as.character(country_names$Reviewer_Nationality),'All'), 
-                        selected = c('All'))
+                        choices = c(as.character(country_names$Reviewer_Nationality)), 
+                        selected = c('United Kingdom'))
     }
   }, ignoreInit = TRUE)
   
