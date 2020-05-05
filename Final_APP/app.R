@@ -27,12 +27,13 @@ library(tidyr)
 library(textstem)
 library(readr)
 
-#Dealing with datas
-#Q1_data
+options(scipen=999)
+
+# Dealing with data
+# Q1_data
 all <- readRDS("Hotel_Reviews_Location.rds")
 
-
-#Q2_Data
+# Q2_Data
 #q2p1 <- read.csv("final_projectq2_1.csv")
 #saveRDS(q2p1,"final_projectq2_1.rds")
 #q2p3 <- read.csv("hotel_data_people.csv")
@@ -43,7 +44,7 @@ trip_type_data_overall <- q2p1 %>%
   group_by(trip_type) %>%
   summarise(n = n())
 
-#Q3
+# Q3_data
   #hotel_q3 <- read.csv("Hotel_Reviews.csv")
   #saveRDS(hotel_q3,"Hotel_Reviews.rds")
   hotel <- readRDS("Hotel_Reviews.rds")
@@ -61,7 +62,7 @@ trip_type_data_overall <- q2p1 %>%
       LIMIT 10')
   top <- na.omit(top)
  
-#Q4
+# Q4_data
   #hotel_q4 <- read.csv("Hotel_Cleaned_q4.csv")
   #saveRDS(hotel_q4,'Hotel_Cleaned_q4.rds')
   hotel_q4 <- readRDS('Hotel_Cleaned_q4.rds')
@@ -69,41 +70,38 @@ trip_type_data_overall <- q2p1 %>%
   country <- unique(hotel_q4$Country)
   name <- c("All",name)
   
-  #Hilton
+  # Hilton
   hilton_by_country <- sqldf('SELECT Name, 
 AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       WHERE Hotel_Name LIKE "%Hilton%"
       GROUP BY Country')
   
-  #Marriott
+  # Marriott
   marriott_by_country <- sqldf('SELECT Name, 
 AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       WHERE Hotel_Name LIKE "%Marriott%"
       GROUP BY Country')
   
-  #Crowne Plaza
+  # Crowne Plaza
   crowne_plaza_by_country <- sqldf('SELECT Name, 
 AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       WHERE Hotel_Name LIKE "%Crowne_Plaza%"
       GROUP BY Country')
 
-  
-  #Holiday Inn
+  # Holiday Inn
   holiday_inn_by_country <- sqldf('SELECT Name, 
 AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       WHERE Hotel_Name LIKE "%Holiday_Inn%"
       GROUP BY Country')
 
-  
-  #Ritz
+  # Ritz
   ritz_by_country <- sqldf('SELECT Name, 
 AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       WHERE Hotel_Name LIKE "%Ritz%"
       GROUP BY Country')
   ritz_by_country
   
-  
-  #Waldorf
+  # Waldorf
   waldorf_by_country <- sqldf('SELECT Name, 
 AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       WHERE Hotel_Name LIKE "%Waldorf%"
@@ -117,7 +115,7 @@ AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
                          ritz_by_country,
                          waldorf_by_country)
   
-#Q5
+# Q5
   hotel_review_sub <- readRDS('hotel_review_sub.rds')
   text_process <- function(country){
     if (country=="All"){
@@ -253,14 +251,18 @@ AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
         axis.ticks.x=element_blank())
     return(ggplotly(p_2,tooltip = 'text')%>%layout(margin=m))
   }
-  
+
+# Q3    
   country_names <- hotel_review_sub %>%
     select(Reviewer_Nationality)%>%
     distinct()
-#q1 
+
+# Q1
 pal <- colorRampPalette(c("blue", "red"))
 var1 <- c("All", "Austria", "France", "Italy", "Netherlands", "Spain", "United Kingdom")
 
+
+# Define UI for application
 ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                     dashboardSidebar(sidebarMenu(
                       menuItem("Dashboard", tabName = "Dashboard", icon = icon("dashboard")),
@@ -284,7 +286,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                   box(
                                     title = "About team",
                                     status = "danger",
-                                    width = "6 col-lg-4",
+                                    width = 5,
                                     tags$p(
                                       class = "text-center",
                                       tags$strong("Hi! We are team YYY."),
@@ -322,20 +324,23 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                   box(
                                     title = "About this Dashboard",
                                     status = "primary",
-                                    width = "6 col-lg-4",
+                                    width = 6,
                                     tags$p(
                                       class = "text-center",
                                       tags$strong("About dataset")
                                     ),
                                     tags$p(
+                                      class = "text-center",
                                       "The dataset we use is named 515K Hotel Reviews Data in Europe. This dataset can be found at ",
                                       tags$a(href = "https://www.kaggle.com/jiashenliu/515k-hotel-reviews-data-in-europe", target = "_blank", "dataset link",'.')
                                     ),
+                                    br(),
                                     tags$p(
                                       class = "text-center",
                                       tags$strong("About environment")
                                     ),
                                     tags$p(
+                                      class = "text-center",
                                       "This dashboard was built in",
                                       tags$a(href = "https://r-project.org", target = "_blank", "R"),
                                       "and", tags$a(href = "https://rstudio.com", target = "_blank", "RStudio"), "with",
@@ -346,7 +351,8 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                       tags$strong("leaflet,"),
                                       tags$strong("tidyverse,"),
                                       "and many more packages."
-                                    ))),
+                                    )
+                                    )),
                           tabItem("Location", 
                                   fluidRow(
                                     column(width = 9,
@@ -367,47 +373,47 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                   ),
                           tabItem("Behavior",
                                   fluidRow(box(title = "Trip Type",status = "primary",
-                                               plotlyOutput("trip_type", width = "100%")),
+                                               plotlyOutput("trip_type", width = "100%", height = 485)),
                                            box(title = "Make selections",status = "warning",
                                                radioButtons(
                                                  "Trip_Type","Trip Type",
                                                  c("Business trip", "Leisure trip")),
                                                plotOutput("pie_chart", width = "100%"))),
-                                  fluidRow(title = "Boxplot", plotlyOutput("No_people",width = "100%")
+                                  fluidRow(box(width = 12, title = "Boxplot", plotlyOutput("No_people",width=NULL,height=550))
                                            )
                                   ),
-                          tabItem("Nationality", 
-                                  fluidRow(column(width = 3,
-                                valueBoxOutput('TN', width = 12),
-                                valueBoxOutput('top', width = 12),
-                                valueBoxOutput('last', width = 12)
-                              ),
-                              column(width = 8,plotlyOutput('ggplot_a',height = 500),
-                                        br(),
-                                        plotlyOutput('top10',height = 500))
-                            )
-                            ),
+                          tabItem("Nationality",
+                                  fluidRow(
+                                    column(width = 3,
+                                    valueBoxOutput('TN', width = NULL),
+                                    valueBoxOutput('top', width = NULL),
+                                    valueBoxOutput('last', width = NULL)
+                                    ),
+                                    column(width = 9,
+                                      box(width = NULL, status = "warning", plotlyOutput('ggplot_a', height = 500)),
+                                      br(),
+                                      box(width = NULL, status = "primary", plotlyOutput('top10', height = 500))
+                                    ),
+                          )),
                           tabItem("Hotels", 
-                                  fluidRow(column(width = 4, wellPanel(
-                                    radioButtons("picture", "Chart Choice:", choices = list("Chart 1" = 1, "Chart 2"= 2), 
+                                  fluidRow(column(width = 3, wellPanel(
+                                    radioButtons("picture", "Chart Choice:", choices = list("Sorted by Hotel" = 1, "Sorted by Country"= 2), 
                                                  selected = 1
                                   ))),
-                                  column(width = 8,
-                                         box(width = NULL,
-                                             plotlyOutput("p1", height = 500, width = 600),
+                                  column(width = 9,
+                                         box(width = NULL, status = "warning",
+                                             plotlyOutput("p1", height = 500, width = NULL),
+                                             br(),
                                              textOutput("summary"))))),
                           tabItem("Text", 
                                   fluidPage(    
                             fluidRow(
-                              column(
-                                width = 2,
+                              column(width = 2,
                                 wellPanel(
-                                  
                                   pickerInput("level_select", "Level:",   
                                               choices = c("Overall","By country"), 
                                               selected = c("Overall"),
                                               multiple = FALSE),
-                                  
                                   pickerInput("country_select", "Nationality of Customer(s):",   
                                               choices = c(as.character(country_names$Reviewer_Nationality),'All'), 
                                               options = list(`actions-box` = TRUE, `none-selected-text` = "Please make a selection!"),
@@ -422,28 +428,22 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                               min = 1,  max = 1000, value = 100))
                                 
                               ),
-                              column(
-                                width = 5,
+                              column(width = 5,
                                 box(width = NULL, plotOutput("word_cloud_pos",width = "100%"), 
                                     title = "Word Cloud for Positive Reviews", solidHeader = TRUE,status = "primary")
-                                
-                              ),
-                              column(
-                                width = 5,
+                                ),
+                              column(width = 5,
                                 box(width = NULL, plotOutput("word_cloud_neg",width = "100%"), 
                                     title = "Word Cloud for Negative Reviews", solidHeader = TRUE,status = "warning")
-                                
-                              )
+                                )
                             ),
                             fluidRow(
-                              column(
-                                width = 12,
+                              column(width = 12,
                                 box(width = NULL,plotlyOutput("bar_plot_1_text"))
                               )
                             ),
                             fluidRow(
-                              column(
-                                width = 12,
+                              column(width = 12,
                                 box(width = NULL,plotlyOutput("bar_plot_2_text"))
                               ))
                           )
@@ -454,9 +454,9 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
 
 # Define server logic
 server <- function(input, output, session) {
-  
+
+# Q1  
   data <- reactive({
-    
     if(input$Country == "All"){all[all$Average_Score >= input$Average_Score[1] &
                                      all$Average_Score <= input$Average_Score[2] &
                                      all$Total_Number_of_Reviews >= input$Total_Number_of_Reviews[1] &
@@ -467,24 +467,22 @@ server <- function(input, output, session) {
                all$Average_Score <= input$Average_Score[2] &
                all$Total_Number_of_Reviews >= input$Total_Number_of_Reviews[1] &
                all$Total_Number_of_Reviews <= input$Total_Number_of_Reviews[2] ,]}
-  })
-  
+    })
   
   table_data <- reactive({
     req(input$table_rows_all)
-    all[input$table_rows_all ,]  
-  })
+    all[input$table_rows_all ,]
+    })
   
   input_data <- reactive({
     if (nrow(table_data()) > 0 && nrow(table_data()) < nrow(data())){
-      table_data()} else {data()}})
-  
+      table_data()} else {data()}
+    })
   
   output$map <- renderLeaflet({input_data() %>% leaflet() %>%
       addTiles(options = providerTileOptions(minZoom = 2)) %>%
       fitBounds(min(all$lng), min(all$lat), max(all$lng), max(all$lat))
-  })
-  
+    })
   
   output$table <- renderDataTable({
     datatable(data()[, c("Hotel_Name", "Hotel_Address", "Average_Score", "Total_Number_of_Reviews", "Country")],
@@ -499,11 +497,9 @@ server <- function(input, output, session) {
                                                list(className = "dt-head-nowrap", targets = "_all"))
               ))})
   
-  
   output$vbox <- renderValueBox({
     valueBox(h4("Total Number of Hotels"),
              nrow(input_data()))})
-  
   
   output$histScore <- renderPlot({
     if (nrow(input_data()) == 0)
@@ -517,7 +513,6 @@ server <- function(input, output, session) {
          col = "#ff9933",
          border = "white")})
   
-  
   output$histReviews <- renderPlot({
     if (nrow(input_data()) == 0)
       return(NULL)
@@ -529,7 +524,6 @@ server <- function(input, output, session) {
          xlim = c(0,20000),
          col = "#FA5858",
          border = "white")})
-  
   
   observe({
     pal_country <- colorNumeric(pal(10), domain = all$Average_Score)
@@ -550,9 +544,7 @@ server <- function(input, output, session) {
                                        input_data()$Total_Number_of_Reviews*0.003),
                        fillOpacity = 0.8,
                        popup = content_popup)
-    #layerId = as.integer(rownames(input_data())))
-  })
-  
+    })
   
   observe({
     proxy <- leafletProxy("map", data = input_data())
@@ -560,10 +552,8 @@ server <- function(input, output, session) {
     if (nrow(input_data()) > 1) {
       pal_country <- colorNumeric(pal(10), domain = all$Average_Score)
       proxy %>% addLegend(pal = pal_country, values = input_data()$Average_Score,
-                          title = "Average Score", position = "bottomleft")
-    }
-  })
-  
+                          title = "Average Score", position = "bottomleft")}
+    })
   
   observeEvent(input$table_rows_selected, {
     row_selected = data()[input$table_rows_selected ,]
@@ -588,15 +578,11 @@ server <- function(input, output, session) {
                                                row_selected$Total_Number_of_Reviews*0.003),
                                fillOpacity = 0.8,
                                popup = content_popup)
-    #layerId = as.integer(rownames(row_selected)))
     
     if (nrow(row_selected) > 1) {
       proxy %>% addLegend(pal = pal_country, values = row_selected$Average_Score,
                           title = "Average Score", position = "bottomleft")}
-    
-  })
-  
-  
+    })
   
   observeEvent(input$sidebarCollapsed, {
     output$table <- renderDataTable({
@@ -613,6 +599,8 @@ server <- function(input, output, session) {
                 ))})
   })
   
+
+# Q2    
   output$trip_type <- renderPlotly({
     rip_type <- ggplot(trip_type_data_overall) + geom_col(aes(x = trip_type, y = n, fill = trip_type)) +  labs(x = "Trip Type", y = "count", title = "The Chart of different Trip Type",fill = "Trip Type") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") 
   })
@@ -624,7 +612,7 @@ server <- function(input, output, session) {
         summarise(n = n())
       my_label <- filter(data_p2, trip_type == "Business trip")
       my_label_1 = as.vector(my_label$score_level)   
-      my_label_2 = paste(my_label_1, "(", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")  
+      my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")  
       ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + coord_polar(theta = "y") +  labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") +  scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())
     } else if(input$Trip_Type == "Leisure trip") {
       data_p2 <- q2p1 %>%
@@ -632,31 +620,36 @@ server <- function(input, output, session) {
         summarise(n = n())
       my_label <- filter(data_p2, trip_type == "Leisure trip")
       my_label_1 = as.vector(my_label$score_level)   
-      my_label_2 = paste(my_label_1, "(", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")   
+      my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")   
       ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") + scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())}
   })
  
   output$No_people<- renderPlotly({
-    people_plot <- ggplot(q2p3) + geom_boxplot(aes(x = No_people, y = Reviewer_Score, fill = No_people)) + labs(x= 'Number of People',y="Reviewer Score", title="Reviewer Score between different number of people traveled with",
-                                                                                                                fill = 'Number of People')+ theme(legend.position = 'right')
+      people_plot <- ggplot(q2p3) + geom_boxplot(aes(x = No_people, y = Reviewer_Score, fill = No_people)) + labs(x= 'Number of People',y="Reviewer Score", title="Reviewer Score between different number of people traveled with",
+                                                                                                                fill = 'Number of People')+ theme(legend.position = 'right', axis.text.x = element_text(angle = 30))
   }) 
- 
+  
+  
+# Q3  
   output$ggplot_a <- renderPlotly({
-    ggplotly(ggplot(data = a, aes(x = Reviewer_Nationality, y = Reviewer_Score, fill = Reviewer_Nationality))+ geom_boxplot()+
+    layout(ggplotly(ggplot(data = a, aes(x = Reviewer_Nationality, y = Reviewer_Score, fill = Reviewer_Nationality))+ geom_boxplot()+
                scale_fill_brewer(palette = 'Set3')+
                theme(panel.background = element_blank(),axis.line = element_line(colour = "black"))+
-               guides(fill=guide_legend(title="Reviewer Nationality"))+
+               #guides(fill=guide_legend(title="Reviewer Nationality"))+
                xlab('Reviewer Nationality')+
-               ylab('Reviewer Score'))})
+               ylab('Reviewer Score')+
+               theme(legend.position = "none")), margin = list(b = 160), xaxis = list(tickangle = 45))})
   
   output$top10 <- renderPlotly({
     ggplotly(ggplot(data = top)+
                geom_bar(aes(x = Reviewer_Nationality, y = Difference, fill = Reviewer_Nationality), stat = 'identity', width = 0.9)+
                scale_fill_brewer(palette = 'Set3')+
                theme(panel.background = element_blank(),axis.line = element_line(colour = "black"))+
-               guides(fill=guide_legend(title="Reviewer Nationality"))+
+               #guides(fill=guide_legend(title="Reviewer Nationality"))+
                xlab('Reviewer Nationality')+
-               ylab('Difference to Hotel Avg Score'))})
+               ylab('Difference to Hotel Avg Score')+
+               theme(axis.text.x = element_text(size=9),
+                     legend.position = "none"))})
   
   output$TN <- renderValueBox({valueBox(227, 'Total Nationlity', icon = icon('address-card'))})
   
@@ -667,6 +660,9 @@ server <- function(input, output, session) {
   output$last <- renderValueBox({valueBox('1.3%', 'Percentage of Reviewer Nationality lower than 6 points',
                                           icon = icon('chart-pie'), 
                                           color = 'green')})
+
+    
+# Q5  
   observeEvent(input$level_select, {
     if (input$level_select=="Overall") {
       updatePickerInput(session = session, inputId = "country_select", 
@@ -683,9 +679,11 @@ server <- function(input, output, session) {
   output$word_cloud_pos <- renderPlot({
     word_cloud_pos(input$max_word,input$freq ,input$country_select)
   })
+  
   output$word_cloud_neg <- renderPlot({
     word_cloud_neg(input$max_word,input$freq ,input$country_select)
   })
+  
   output$bar_plot_1_text <- renderPlotly({
     bar_plot_1(input$country_select)
   })
@@ -693,6 +691,9 @@ server <- function(input, output, session) {
   output$bar_plot_2_text <- renderPlotly({
     bar_plot_2(input$country_select)
   })
+  
+  
+# Q4  
   output$p1 <- renderPlotly({
     
     if (input$picture == "1") {
@@ -717,11 +718,11 @@ server <- function(input, output, session) {
     
     if (input$picture == "1") {
       
-      paste0('Pic.', input$picture ," , Line Chart of Average Reviewer Score Sorted by Different Hotel" )
+      paste0('Fig.', input$picture ," , Line Chart of Average Reviewer Score Sorted by Different Hotel" )
       
     } else if (input$picture == "2") {
       
-      paste0('Pic.', input$picture ," , Line Chart of Average Reviewer Score Sorted by Different Country" )
+      paste0('Fig.', input$picture ," , Line Chart of Average Reviewer Score Sorted by Different Country" )
       
     }})
   
