@@ -327,7 +327,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     width = 7,
                                     tags$p(
                                       class = "text-center",
-                                      "Where to find a hotel being top rated and receive lots of reviews?"
+                                      "Where to find a hotel being top rated and receives lots of reviews?"
                                     ),
                                     tags$p(
                                       class = "text-center",
