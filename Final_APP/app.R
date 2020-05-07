@@ -777,7 +777,7 @@ server <- function(input, output, session) {
     
     if (input$picture == "1") {
       
-      paste0("Average Score Comparison among Certain Brand Hotels in Different Countries")
+      paste0("Average Score Comparison of Certain Brand Hotels among Different Countries")
       
     } else if (input$picture == "2") {
       
