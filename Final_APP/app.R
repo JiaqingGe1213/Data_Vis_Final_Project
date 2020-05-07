@@ -327,7 +327,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     width = 7,
                                     tags$p(
                                       class = "text-center",
-                                      "Where to find a hotel being top rated and receives lots of reviews?"
+                                      "Where to find top-rated hotels with lots of reviews?"
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -777,11 +777,11 @@ server <- function(input, output, session) {
     
     if (input$picture == "1") {
       
-      paste0("Comparison among Countries: How the Average Scores of Certain Brand Hotels Vary among Different Countries")
+      paste0("Average Score Comparison among Certain Brand Hotels in Different Countries")
       
     } else if (input$picture == "2") {
       
-      paste0("Comparison among Hotels: How the Average Scores of Certain Brand Hotels differ from each other in Different Countries")
+      paste0("Average Score Comparison among Certain Brand Hotels in the Same Country")
       
     }})
   
