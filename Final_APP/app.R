@@ -327,7 +327,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     width = 7,
                                     tags$p(
                                       class = "text-center",
-                                      "Where to find top-rated hotels with lots of reviews?"
+                                      "Where to find top-rated hotels with lots of reviews? Want to look up the details of hotels and find a hotel with certain criteria?"
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -397,39 +397,40 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                                plotOutput("histReviews", height = 270))))
                                   ),
                           tabItem("Behavior",
-                                  fluidRow(box(title = "Trip Type",status = "primary",
+                                  fluidRow(box(title = "Trip Type", status = "primary",
                                                plotlyOutput("trip_type", width = "100%", height = 485)),
-                                           box(title = "Make selections",status = "warning",
+                                           box(title = "Make selections", status = "warning",
                                                radioButtons(
-                                                 "Trip_Type","Trip Type",
+                                                 "Trip_Type", "Trip Type",
                                                  c("Business trip", "Leisure trip")),
                                                plotOutput("pie_chart", width = "100%"))),
-                                  fluidRow(box(width = 12, title = "Boxplot", plotlyOutput("No_people",width=NULL,height=550))
-                                           )
+                                  fluidRow(box(width = 12, title = "Boxplot", plotlyOutput("No_people", width=NULL, height=550)))
                                   ),
                           tabItem("Nationality",
                                   fluidRow(
                                     column(width = 3,
-                                    valueBoxOutput('TN', width = NULL),
-                                    valueBoxOutput('top', width = NULL),
-                                    valueBoxOutput('last', width = NULL)
+                                           valueBoxOutput('TN', width = NULL),
+                                           valueBoxOutput('top', width = NULL),
+                                           valueBoxOutput('last', width = NULL)
                                     ),
                                     column(width = 9,
-                                      box(width = NULL, status = "warning", plotlyOutput('ggplot_a', height = 500)),
-                                      br(),
-                                      box(width = NULL, status = "primary", plotlyOutput('top10', height = 500))
-                                    ),
-                          )),
+                                           box(width = NULL, status = "warning", plotlyOutput('ggplot_a', height = 500)),
+                                    )),
+                                  fluidRow(
+                                    box(width = 12, status = "primary", plotlyOutput('top10', height = 500)))
+                                  ),
                           tabItem("Hotels", 
                                   fluidRow(column(width = 3, wellPanel(
                                     radioButtons("picture", "Chart Choice:", choices = list("Comparison among Countries" = 1, "Comparison among Hotels"= 2), 
-                                                 selected = 1
-                                  ))),
+                                                 selected = 1)
+                                    )),
                                   column(width = 9,
                                          box(width = NULL, status = "warning",
                                              plotlyOutput("p1", height = 500, width = NULL),
                                              br(),
-                                             textOutput("summary"))))),
+                                             textOutput("summary")))
+                                        )
+                                  ),
                           tabItem("Text", 
                                   fluidPage(
                                     fluidRow(
@@ -688,40 +689,42 @@ server <- function(input, output, session) {
   
 # Q3
   output$ggplot_a <- renderPlotly({
-    layout(ggplotly(
+    ggplotly(
       ggplot(data = a, aes(x = Reviewer_Nationality, y = Reviewer_Score, fill = Reviewer_Nationality))+
         geom_boxplot()+
         scale_fill_brewer(palette = "Set3")+
         theme(panel.background = element_blank(), axis.line = element_line(colour = "black"))+
         #guides(fill = guide_legend(title = "Reviewer Nationality"))+
-        xlab("Reviewer Nationality")+
-        ylab("Reviewer Score")+
-        theme(legend.position = "none")), 
-      margin = list(b = 160), xaxis = list(tickangle = 45))})
+        #xlab("Reviewer Nationality")+
+        #ylab("Reviewer Score")+
+        labs(x = "Reviewer Nationality", y = "Reviewer Score", title = "Reviewer Scores Given by Most Common Nationalities", fill = "Reviewer Nationality")+
+        theme(legend.position = "right", axis.text.x = element_text(angle = 45)))
+  })
   
   output$top10 <- renderPlotly({
     ggplotly(
       ggplot(data = top)+
         geom_bar(aes(x = Reviewer_Nationality, y = Difference, fill = Reviewer_Nationality, 
-                     text = paste("Reviewer Nationality: ", Reviewer_Nationality, "<br>Difference to Average Score: ", Difference)), stat = "identity", width = 0.9)+
+                     text = paste("Reviewer Nationality: ", Reviewer_Nationality, "<br>Difference to Average Score: ", Difference)), stat = "identity", width = 0.7)+
         scale_fill_brewer(palette = "Set3")+
         theme(panel.background = element_blank(), axis.line = element_line(colour = "black"))+
         #guides(fill = guide_legend(title = "Reviewer Nationality"))+
-        xlab("Reviewer Nationality")+
-        ylab("Difference to Hotel Avg Score")+
-        theme(axis.text.x = element_text(size=9), legend.position = "none"), 
+        #xlab("Reviewer Nationality")+
+        #ylab("Difference to Hotel Avg Score")+
+        labs(x = "Reviewer Nationality", y = "Difference to Hotel Avg Score", title = "Top 10 Nationalities Whose Average Reviewer Score Is Higher Than Hotel Average Score", fill = paste("Reviewer","<br>Nationality"))+
+        theme(legend.position = "right", axis.text.x = element_text(angle = 45)), 
       tooltip = "text")})
   
-  output$TN <- renderValueBox({valueBox(227, "Total Nationlity", icon = icon("address-card"))})
+  output$TN <- renderValueBox({valueBox(227, "Total Number of Nationalities Involved", icon = icon("address-card"))})
   
-  output$top <- renderValueBox({valueBox("7.4%", "Percentage of Reviewer Nationality higher than 9 points",
+  output$top <- renderValueBox({valueBox("7.4%", "Percentage of Nationality Whose Reviewer Scores Are Higher Than 9 Points Out of 10 Points",
                                          icon = icon("chart-pie"),
                                          color = "yellow")})
   
-  output$last <- renderValueBox({valueBox("1.3%", "Percentage of Reviewer Nationality lower than 6 points",
+  output$last <- renderValueBox({valueBox("1.3%", "Percentage of Nationality Whose Reviewer Scores Are Lower Than 6 Points Out of 10 Points",
                                           icon = icon("chart-pie"), 
                                           color = "green")})
-
+  
     
 # Q5
   observeEvent(input$level_select, {
