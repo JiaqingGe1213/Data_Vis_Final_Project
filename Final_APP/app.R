@@ -249,10 +249,10 @@ AVG(Reviewer_Score) AS avg_score, Country FROM hotel_q4
       theme(
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
-    return(ggplotly(p_2,tooltip = 'text')%>%layout(margin=m))
+    return(ggplotly(p_2, tooltip = 'text')%>%layout(margin=m))
   }
 
-# Q3    
+# Q3
   country_names <- hotel_review_sub %>%
     select(Reviewer_Nationality)%>%
     distinct()
@@ -284,12 +284,12 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                         tabItems(
                           tabItem("Dashboard", 
                                   box(
-                                    title = "About team",
+                                    title = "About the team",
                                     status = "danger",
                                     width = 5,
-                                    tags$p(
+                                    tags$h3(
                                       class = "text-center",
-                                      tags$strong("Hi! We are team YYY."),
+                                      tags$strong("Hi! We are team YYY.")
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -324,10 +324,35 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                   box(
                                     title = "About this Dashboard",
                                     status = "primary",
-                                    width = 6,
+                                    width = 7,
                                     tags$p(
                                       class = "text-center",
-                                      tags$strong("About dataset")
+                                      "Where to find a hotel being top rated and receive lots of reviews?"
+                                    ),
+                                    tags$p(
+                                      class = "text-center",
+                                      "Whether the type of trip and/or with whom a guest travels will affect the score he/she gives to a hotel?"
+                                    ),
+                                    tags$p(
+                                      class = "text-center",
+                                      "People from which countries are more inclined to give a high score?"
+                                    ),
+                                    tags$p(
+                                      class = "text-center",
+                                      "Are hotels of the same brand receive similar scores in different countries?"
+                                    ),
+                                    tags$p(
+                                      class = "text-center",
+                                      "What are the positive reviews and negative reviews mainly about separately?"
+                                    ),
+                                    tags$p(
+                                      class = "text-center",
+                                      tags$strong(tags$em("Let's investigate all these questions with this dashboard!"))
+                                    ),
+                                    br(),
+                                    tags$p(
+                                      class = "text-center",
+                                      tags$strong("About the dataset")
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -337,7 +362,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     br(),
                                     tags$p(
                                       class = "text-center",
-                                      tags$strong("About environment")
+                                      tags$strong("About the environment")
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -397,7 +422,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                           )),
                           tabItem("Hotels", 
                                   fluidRow(column(width = 3, wellPanel(
-                                    radioButtons("picture", "Chart Choice:", choices = list("Sorted by Hotel" = 1, "Sorted by Country"= 2), 
+                                    radioButtons("picture", "Chart Choice:", choices = list("Comparison among Countries" = 1, "Comparison among Hotels"= 2), 
                                                  selected = 1
                                   ))),
                                   column(width = 9,
@@ -455,7 +480,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
 # Define server logic
 server <- function(input, output, session) {
 
-# Q1  
+# Q1
   data <- reactive({
     if(input$Country == "All"){all[all$Average_Score >= input$Average_Score[1] &
                                      all$Average_Score <= input$Average_Score[2] &
@@ -600,9 +625,14 @@ server <- function(input, output, session) {
   })
   
 
-# Q2    
+# Q2
   output$trip_type <- renderPlotly({
-    rip_type <- ggplot(trip_type_data_overall) + geom_col(aes(x = trip_type, y = n, fill = trip_type)) +  labs(x = "Trip Type", y = "count", title = "The Chart of different Trip Type",fill = "Trip Type") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") 
+    ggplotly(
+      ggplot(trip_type_data_overall) + 
+        geom_col(aes(x = trip_type, y = n, fill = trip_type, text = paste("Trip Type: ", trip_type, "<br>Count: ", n))) + 
+        labs(x = "Trip Type", y = "Count", title = "The Chart of Different Trip Type", fill = "Trip Type") + 
+        theme_minimal() + theme(axis.ticks = element_blank()) + theme(legend.position = "right"), 
+      tooltip = "text")
   })
   
   output$pie_chart <- renderPlot({
@@ -613,7 +643,12 @@ server <- function(input, output, session) {
       my_label <- filter(data_p2, trip_type == "Business trip")
       my_label_1 = as.vector(my_label$score_level)   
       my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")  
-      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + coord_polar(theta = "y") +  labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") +  scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())
+      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + 
+        geom_bar(stat = "identity", width = 1) + coord_polar(theta = "y") + 
+        labs(x = "", y = "", title = "The Pie Chart of Score Level", fill = "Score Level") + 
+        theme(axis.ticks = element_blank()) + theme(legend.position = "right") + 
+        scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + 
+        theme_minimal() + theme(axis.text.x = element_blank())
     } else if(input$Trip_Type == "Leisure trip") {
       data_p2 <- q2p1 %>%
         group_by(trip_type, score_level) %>%
@@ -621,48 +656,62 @@ server <- function(input, output, session) {
       my_label <- filter(data_p2, trip_type == "Leisure trip")
       my_label_1 = as.vector(my_label$score_level)   
       my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")   
-      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") + scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())}
+      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + 
+        geom_bar(stat = "identity", width = 1) +
+        coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score Level", fill = "Score Level") + 
+        theme(axis.ticks = element_blank()) + theme(legend.position = "right") + 
+        scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + 
+        theme_minimal() + theme(axis.text.x = element_blank())}
   })
  
   output$No_people<- renderPlotly({
-      people_plot <- ggplot(q2p3) + geom_boxplot(aes(x = No_people, y = Reviewer_Score, fill = No_people)) + labs(x= 'Number of People',y="Reviewer Score", title="Reviewer Score between different number of people traveled with",
-                                                                                                                fill = 'Number of People')+ theme(legend.position = 'right', axis.text.x = element_text(angle = 30))
+      people_plot <- ggplot(q2p3) + 
+        geom_boxplot(aes(x = No_people, y = Reviewer_Score, fill = No_people)) + 
+        labs(x= "Number of People", y="Reviewer Score", 
+             title="Reviewer Score of Different Number of People Traveled with", 
+             fill = "Number of People") + theme_minimal() + 
+        theme(legend.position = "right", axis.text.x = element_text(angle = 30))
   }) 
   
   
-# Q3  
+# Q3
   output$ggplot_a <- renderPlotly({
-    layout(ggplotly(ggplot(data = a, aes(x = Reviewer_Nationality, y = Reviewer_Score, fill = Reviewer_Nationality))+ geom_boxplot()+
-               scale_fill_brewer(palette = 'Set3')+
-               theme(panel.background = element_blank(),axis.line = element_line(colour = "black"))+
-               #guides(fill=guide_legend(title="Reviewer Nationality"))+
-               xlab('Reviewer Nationality')+
-               ylab('Reviewer Score')+
-               theme(legend.position = "none")), margin = list(b = 160), xaxis = list(tickangle = 45))})
+    layout(ggplotly(
+      ggplot(data = a, aes(x = Reviewer_Nationality, y = Reviewer_Score, fill = Reviewer_Nationality))+
+        geom_boxplot()+
+        scale_fill_brewer(palette = "Set3")+
+        theme(panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+        #guides(fill = guide_legend(title = "Reviewer Nationality"))+
+        xlab("Reviewer Nationality")+
+        ylab("Reviewer Score")+
+        theme(legend.position = "none")), 
+      margin = list(b = 160), xaxis = list(tickangle = 45))})
   
   output$top10 <- renderPlotly({
-    ggplotly(ggplot(data = top)+
-               geom_bar(aes(x = Reviewer_Nationality, y = Difference, fill = Reviewer_Nationality), stat = 'identity', width = 0.9)+
-               scale_fill_brewer(palette = 'Set3')+
-               theme(panel.background = element_blank(),axis.line = element_line(colour = "black"))+
-               #guides(fill=guide_legend(title="Reviewer Nationality"))+
-               xlab('Reviewer Nationality')+
-               ylab('Difference to Hotel Avg Score')+
-               theme(axis.text.x = element_text(size=9),
-                     legend.position = "none"))})
+    ggplotly(
+      ggplot(data = top)+
+        geom_bar(aes(x = Reviewer_Nationality, y = Difference, fill = Reviewer_Nationality, 
+                     text = paste("Reviewer Nationality: ", Reviewer_Nationality, "<br>Difference to Average Score: ", Difference)), stat = "identity", width = 0.9)+
+        scale_fill_brewer(palette = "Set3")+
+        theme(panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+        #guides(fill = guide_legend(title = "Reviewer Nationality"))+
+        xlab("Reviewer Nationality")+
+        ylab("Difference to Hotel Avg Score")+
+        theme(axis.text.x = element_text(size=9), legend.position = "none"), 
+      tooltip = "text")})
   
-  output$TN <- renderValueBox({valueBox(227, 'Total Nationlity', icon = icon('address-card'))})
+  output$TN <- renderValueBox({valueBox(227, "Total Nationlity", icon = icon("address-card"))})
   
-  output$top <- renderValueBox({valueBox('7.4%', 'Percentage of Reviewer Nationality higher than 9 points',
-                                         icon = icon('chart-pie'),
-                                         color = 'yellow')})
+  output$top <- renderValueBox({valueBox("7.4%", "Percentage of Reviewer Nationality higher than 9 points",
+                                         icon = icon("chart-pie"),
+                                         color = "yellow")})
   
-  output$last <- renderValueBox({valueBox('1.3%', 'Percentage of Reviewer Nationality lower than 6 points',
-                                          icon = icon('chart-pie'), 
-                                          color = 'green')})
+  output$last <- renderValueBox({valueBox("1.3%", "Percentage of Reviewer Nationality lower than 6 points",
+                                          icon = icon("chart-pie"), 
+                                          color = "green")})
 
     
-# Q5  
+# Q5
   observeEvent(input$level_select, {
     if (input$level_select=="Overall") {
       updatePickerInput(session = session, inputId = "country_select", 
@@ -672,7 +721,7 @@ server <- function(input, output, session) {
     if (input$level_select=="By country") {
       updatePickerInput(session = session, inputId = "country_select", 
                         choices = c(as.character(country_names$Reviewer_Nationality)), 
-                        selected = c('United Kingdom'))
+                        selected = c("United Kingdom"))
     }
   }, ignoreInit = TRUE)
   
@@ -693,24 +742,34 @@ server <- function(input, output, session) {
   })
   
   
-# Q4  
+# Q4
   output$p1 <- renderPlotly({
     
     if (input$picture == "1") {
-      
-      ggplotly(ggplot(hotel_all_ave, aes(x=factor(Country), y=avg_score, colour=Name,group=Name)) +
-                 xlab("Country")+
-                 ylab("Average Score")+
-                 geom_line(size=0.42) +
-                 geom_point(size = 1.26)+theme_minimal())
+
+        ggplotly(
+          ggplot(hotel_all_ave, aes(x=factor(Country), y=avg_score, colour=Name, group=Name, 
+                                    text=paste("Hotel Name: ", factor(Name), "<br>Average Score: ", avg_score, "<br>Country: ", Country)))+
+            xlab("Country")+
+            ylab("Average Score")+
+            labs(colour="Hotel Name")+
+            geom_line(size=0.42) +
+            geom_point(size = 1.26)+
+            theme_minimal(), 
+          tooltip="text")
       
     } else if (input$picture == "2") {
       
-      ggplotly(ggplot(hotel_all_ave, aes(x=factor(Name), y=avg_score, colour=Country,group=Country)) +
-                 xlab("Hotel Name")+
-                 ylab("Average Score")+
-                 geom_line(size=0.42) +
-                 geom_point(size = 1.26)+theme_minimal()) }
+      ggplotly(
+        ggplot(hotel_all_ave, aes(x=factor(Name), y=avg_score, colour=Country, group=Country, 
+                                  text=paste("Hotel Name: ", factor(Name), "<br>Average Score: ", avg_score, "<br>Country: ", Country)))+
+          xlab("Hotel Name")+
+          ylab("Average Score")+
+          labs(colour="Hotel Name")+
+          geom_line(size=0.42) +
+          geom_point(size = 1.26)+
+          theme_minimal(), 
+        tooltip="text")}
     
   })
   
@@ -718,11 +777,11 @@ server <- function(input, output, session) {
     
     if (input$picture == "1") {
       
-      paste0('Fig.', input$picture ," , Line Chart of Average Reviewer Score Sorted by Different Hotel" )
+      paste0("Comparison among Countries: How the Average Scores of Certain Brand Hotels Vary among Different Countries")
       
     } else if (input$picture == "2") {
       
-      paste0('Fig.', input$picture ," , Line Chart of Average Reviewer Score Sorted by Different Country" )
+      paste0("Comparison among Hotels: How the Average Scores of Certain Brand Hotels differ from each other in Different Countries")
       
     }})
   
@@ -730,5 +789,5 @@ server <- function(input, output, session) {
 }
 
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
