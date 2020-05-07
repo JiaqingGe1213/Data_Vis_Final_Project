@@ -431,7 +431,19 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                              br(),
                                              textOutput("summary"))))),
                           tabItem("Text", 
-                                  fluidPage(    
+                                  fluidPage(
+                                    fluidRow(
+                                      box(
+                                        status = "primary",
+                                        width = "12",
+                                        tags$p(
+                                          class = "text-center",
+                                          tags$strong("Text mining for positive reviews and negative reviews")),
+                                        tags$p(
+                                          class = "text-center",
+                                          "In this part, we aim to explore the narrative of positive reviews and negative reviews and whether there is a difference in the word selection for consumers from different nationalities.")
+                                      )
+                                    ),
                             fluidRow(
                               column(width = 2,
                                 wellPanel(
