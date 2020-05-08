@@ -648,34 +648,24 @@ server <- function(input, output, session) {
       tooltip = "text")
   })
   
-  output$pie_chart <- renderPlot({
+ output$pie_chart <- renderPlot({
     if (input$Trip_Type == "Business trip") {
       data_p2 <- q2p1 %>%
-        group_by(trip_type, score_level) %>%
-        summarise(n = n())
-      my_label <- filter(data_p2, trip_type == "Business trip")
-      my_label_1 = as.vector(my_label$score_level)   
-      my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")  
-      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + 
-        geom_bar(stat = "identity", width = 1) + coord_polar(theta = "y") + 
-        labs(x = "", y = "", title = "The Pie Chart of Score Level", fill = "Score Level") + 
-        theme(axis.ticks = element_blank()) + theme(legend.position = "right") + 
-        scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + 
-        theme_minimal() + theme(axis.text.x = element_blank())
-    } else if(input$Trip_Type == "Leisure trip") {
-      data_p2 <- q2p1 %>%
-        group_by(trip_type, score_level) %>%
-        summarise(n = n())
-      my_label <- filter(data_p2, trip_type == "Leisure trip")
-      my_label_1 = as.vector(my_label$score_level)   
-      my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")   
-      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + 
-        geom_bar(stat = "identity", width = 1) +
-        coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score Level", fill = "Score Level") + 
-        theme(axis.ticks = element_blank()) + theme(legend.position = "right") + 
-        scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + 
-        theme_minimal() + theme(axis.text.x = element_blank())}
-  })
+       group_by(trip_type, score_level) %>%
+      summarise(n = n())
+     my_label <- filter(data_p2, trip_type == "Business trip")
+my_label_1 = as.vector(my_label$score_level)   
+my_label_2 = paste(my_label_1, "(", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")  
+   ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + geom_text(aes(label = my_label_2), position = position_stack(vjust = 0.5),color = "black",size = 2) + coord_polar(theta = "y") +  labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") +  scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())
+   } else if(input$Trip_Type == "Leisure trip") {
+     data_p2 <- q2p1 %>%
+       group_by(trip_type, score_level) %>%
+      summarise(n = n())
+     my_label <- filter(data_p2, trip_type == "Leisure trip")
+     my_label_1 = as.vector(my_label$score_level)   
+my_label_2 = paste(my_label_1, "(", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")   
+   ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + geom_text(aes(label = my_label_2), position = position_stack(vjust = 0.5),color = "black",size = 2) + coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") + scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())  }
+    })
  
   output$No_people<- renderPlotly({
       people_plot <- ggplot(q2p3) + 
