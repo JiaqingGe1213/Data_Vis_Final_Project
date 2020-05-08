@@ -5,8 +5,9 @@ account: yyypresentation
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2239190
-bundleId: 3102624
+bundleId: 3122241
 url: https://yyypresentation.shinyapps.io/Final_APP/
-when: 1588618165.46435
+when: 1588971581.62298
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: .RData
