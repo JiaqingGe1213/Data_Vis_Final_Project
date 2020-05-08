@@ -339,11 +339,11 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     ),
                                     tags$p(
                                       class = "text-center",
-                                      "Are hotels of the same brand receive similar scores in different countries?"
+                                      "Do hotels of the same brand receive similar scores in different countries?"
                                     ),
                                     tags$p(
                                       class = "text-center",
-                                      "What are the positive reviews and negative reviews mainly about separately?"
+                                      "What are the positive reviews and negative reviews mainly about separately? What about their comparison?"
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -380,6 +380,24 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     )),
                           tabItem("Location", 
                                   fluidRow(
+                                    box(
+                                      status = "primary",
+                                      width = "12",
+                                      tags$p(
+                                        class = "text-center",
+                                        tags$strong("Exploration for hotel distribution")),
+                                      tags$p(
+                                        class = "text-center",
+                                        "In this part, we can filter and find the hotels on the map based on their located country, their average scores, and their total number of reviews received."),
+                                      tags$p(
+                                        class = "text-center",
+                                        "We can also make a search and pick up one or more hotels to show in the table. More details about the hotels that meet your criteria are presented in this tab."),
+                                      tags$p(
+                                        class = "text-center",
+                                        tags$strong("Enjoy exploring!"))
+                                      )
+                                  ),
+                                  fluidRow(
                                     column(width = 9,
                                            box(width = NULL, solidHeader = TRUE,
                                                leafletOutput("map", height = 500)),
@@ -397,6 +415,18 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                                plotOutput("histReviews", height = 270))))
                                   ),
                           tabItem("Behavior",
+                                  fluidRow(
+                                    box(
+                                      status = "primary",
+                                      width = "12",
+                                      tags$p(
+                                        class = "text-center",
+                                        tags$strong("Customer behavior and trip attributes")),
+                                      tags$p(
+                                        class = "text-center",
+                                        "In this part, we will see if the type of trip and/or with whom a guest travels will affect the score he/she gives to a hotel.")
+                                    )
+                                  ),
                                   fluidRow(box(title = "Trip Type", status = "primary",
                                                plotlyOutput("trip_type", width = "100%", height = 485)),
                                            box(title = "Make selections", status = "warning",
@@ -407,6 +437,18 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                   fluidRow(box(width = 12, title = "Boxplot", plotlyOutput("No_people", width=NULL, height=550)))
                                   ),
                           tabItem("Nationality",
+                                  fluidRow(
+                                    box(
+                                      status = "primary",
+                                      width = "12",
+                                      tags$p(
+                                        class = "text-center",
+                                        tags$strong("Reviewer nationalities and scores given")),
+                                      tags$p(
+                                        class = "text-center",
+                                        "In this part, we try to investigate the relationship between a reviewer's nationality and the score he/she gives to a hotel.")
+                                    )
+                                  ),
                                   fluidRow(
                                     column(width = 3,
                                            valueBoxOutput('TN', width = NULL),
@@ -420,6 +462,18 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     box(width = 12, status = "primary", plotlyOutput('top10', height = 500)))
                                   ),
                           tabItem("Hotels", 
+                                  fluidRow(
+                                    box(
+                                      status = "primary",
+                                      width = "12",
+                                      tags$p(
+                                        class = "text-center",
+                                        tags$strong("Brand hotels comparison")),
+                                      tags$p(
+                                        class = "text-center",
+                                        "In this part, we want to present a comparison of certain brand hotels regarding how they perform in different countries and how they perform against each other in the same country.")
+                                    )
+                                  ),
                                   fluidRow(column(width = 3, wellPanel(
                                     radioButtons("picture", "Chart Choice:", choices = list("Comparison among Countries" = 1, "Comparison among Hotels"= 2), 
                                                  selected = 1)
