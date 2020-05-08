@@ -327,7 +327,7 @@ ui <- dashboardPage(dashboardHeader(title = "Hotel Explorer"),
                                     width = 7,
                                     tags$p(
                                       class = "text-center",
-                                      "Where to find top-rated hotels with lots of reviews? Want to look up the details of hotels and find a hotel with certain criteria?"
+                                      "Where to find top-rated hotels with lots of reviews? Want to look up their details and find a hotel with certain criteria?"
                                     ),
                                     tags$p(
                                       class = "text-center",
@@ -650,21 +650,21 @@ server <- function(input, output, session) {
   
  output$pie_chart <- renderPlot({
     if (input$Trip_Type == "Business trip") {
-      data_p2 <- q2p1 %>%
-       group_by(trip_type, score_level) %>%
-      summarise(n = n())
-     my_label <- filter(data_p2, trip_type == "Business trip")
-my_label_1 = as.vector(my_label$score_level)   
-my_label_2 = paste(my_label_1, "(", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")  
-   ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + geom_text(aes(label = my_label_2), position = position_stack(vjust = 0.5),color = "black",size = 2) + coord_polar(theta = "y") +  labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") +  scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())
+      data_p2 <- q2p1 %>% 
+        group_by(trip_type, score_level) %>% 
+        summarise(n = n())
+      my_label <- filter(data_p2, trip_type == "Business trip")
+      my_label_1 = as.vector(my_label$score_level)   
+      my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "") 
+      ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + geom_text(aes(label = my_label_2), position = position_stack(vjust = 0.5), color = "black", size = 3) + coord_polar(theta = "y") +  labs(x = "", y = "", title = "The Pie Chart of Score Level", fill = "Score Level") + theme_minimal() + theme(axis.ticks = element_blank()) + theme(legend.position = "right") + scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())
    } else if(input$Trip_Type == "Leisure trip") {
-     data_p2 <- q2p1 %>%
-       group_by(trip_type, score_level) %>%
-      summarise(n = n())
+     data_p2 <- q2p1 %>% 
+       group_by(trip_type, score_level) %>% 
+       summarise(n = n()) 
      my_label <- filter(data_p2, trip_type == "Leisure trip")
      my_label_1 = as.vector(my_label$score_level)   
-my_label_2 = paste(my_label_1, "(", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "")   
-   ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + geom_text(aes(label = my_label_2), position = position_stack(vjust = 0.5),color = "black",size = 2) + coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score level",fill = "Score_level") + theme(axis.ticks = element_blank()) + theme(legend.position = "right") + scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())  }
+     my_label_2 = paste(my_label_1, " (", round(my_label$n / sum(my_label$n) * 100, 2), "%)", sep = "") 
+     ggplot(my_label, aes(x = " ", y = n, fill = score_level)) + geom_bar(stat = "identity", width = 1) + geom_text(aes(label = my_label_2), position = position_stack(vjust = 0.5), color = "black", size = 3) + coord_polar(theta = "y") + labs(x = "", y = "", title = "The Pie Chart of Score Level", fill = "Score Level") + theme_minimal() + theme(axis.ticks = element_blank()) + theme(legend.position = "right") + scale_fill_discrete(breaks = my_label$score_level, labels = my_label_2) + theme(axis.text.x = element_blank())}
     })
  
   output$No_people<- renderPlotly({
